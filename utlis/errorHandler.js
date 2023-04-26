@@ -4,6 +4,7 @@ const userValidation = require("../validation/userValidation");
 const todoValidation = require("../validation/todoValidation");
 const updateTodoValidation = require("../validation/updateTodoValidation");
 const updateUserValidation = require("../validation/updateUserValidation");
+const loginValidation = require("./../validation/loginValidation");
 const handleUserNotFound = (req, res, next) => {
   const err = res.status(404).json({ message: "User Not Found" });
   next(err);
@@ -72,6 +73,19 @@ const handleUserUpdateValidation = (req, res, next) => {
   req.validateData = value;
   next();
 };
+
+const loginUserValidation = (req, res, next) => {
+  const { value, error } = loginValidation.validate(req.body, {
+    abortEarly: false,
+  });
+  if (error) {
+    const errorMessages = error.details.map((err) => err.message);
+    res.status(400).json({ errors: errorMessages });
+    next(errorMessages);
+  }
+  req.validateData = value;
+  next();
+};
 module.exports = {
   handleUserNotFound,
   handleInvalidId,
@@ -80,4 +94,5 @@ module.exports = {
   handleTodoValidation,
   handleTodoUpdateValidation,
   handleUserUpdateValidation,
+  loginUserValidation
 };
