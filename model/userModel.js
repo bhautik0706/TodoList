@@ -39,13 +39,7 @@ const userSchema = mongoose.Schema(
       required: [true, "Please enter your password"],*/
       minLength: 8,
     },
-    role: {
-      type: "String",
-      enum: [
-        constant.USER_ROLE.USER_ROLE_USER,
-        constant.USER_ROLE.USER_ROLE_ADMIN,
-      ],
-    },
+    
     active: {
       type: Number,
       enum: [constant.ACTIVE_STATUS.ACTIVE, constant.ACTIVE_STATUS.INACTIVE],

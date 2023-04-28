@@ -6,6 +6,8 @@ const todoValidation = require("../validation/todoValidation");
 const validatTodo = require("express-validator");
 const globalerror = require("./../utlis/errorHandler");
 const constant = require("./../utlis/constant");
+const responceHandler = require("./../utlis/responseHandler");
+const { message } = require("../validation/todoValidation");
 exports.createTodo = async (req, res) => {
   try {
     //const todo =  req.validateData;
@@ -34,7 +36,9 @@ exports.createTodo = async (req, res) => {
       subtask.parentTask = savedTodo._id;
       await subtask.save();
     }
-    res.status(201).json(savedTodo);
+    //res.status(201).json(savedTodo);
+    const message = "Success! Your todo has been Saved";
+    responceHandler.sendSuccessResponce(res, message, savedTodo);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -85,15 +89,17 @@ exports.getAll = async (req, res, next) => {
       if (todo.length === 0) {
         return globalerror.handleTodoNotFound(req, res, next);
       } else {
-        res.status(200).json({
-          status: "success",
-          result: todo.length,
-          data: {
-            todo,
-          },
-          totalPages: Math.ceil(count / limit),
-          currentPage: page,
-        });
+        const totalPages = Math.ceil(count / limit);
+        const currentPage = page;
+        const result = todo.length;
+        return responceHandler.sendSuccessResponce(
+          res,
+          message,
+          todo,
+          totalPages,
+          currentPage,
+          result
+        );
       }
     }
   } catch (error) {
@@ -113,13 +119,7 @@ exports.getTodo = async (req, res, next) => {
       if (!todo) {
         return globalerror.handleTodoNotFound(req, res, next);
       }
-      res.status(200).json({
-        status: "success",
-        //result: todo.length,
-        data: {
-          todo,
-        },
-      });
+      responceHandler.sendSuccessResponce(res, message, todo);
     }
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -139,10 +139,11 @@ exports.deleteTodo = async (req, res, next) => {
       for (const subtaskId of todo.subtasks) {
         await Todo.findByIdAndUpdate(subtaskId, { active: false });
       }
-      await Todo.findByIdAndUpdate(req.params.id, { active: false });
-      res
-        .status(200)
-        .json({ message: "Task and subtask deleted successfully" });
+      const todoTasks = await Todo.findByIdAndUpdate(req.params.id, {
+        active: false,
+      });
+      const message = "Task and subtask deleted successfully";
+      responceHandler.sendSuccessResponce(res, message, todoTasks);
     }
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -166,7 +167,9 @@ exports.updatedTodo = async (req, res, next) => {
         status = constant.TASK_STATUS.TASK_STATUS_COMPLETE;
       } else {
         status = constant.TASK_STATUS.TASK_STATUS_PENDING;
-        return res.status(200).json({ message: "Subtasks are not completed" });
+        return res
+          .status(200)
+          .json({ error: true, message: "Subtasks are not completed" });
       }
     }
 
@@ -185,7 +188,8 @@ exports.updatedTodo = async (req, res, next) => {
       if (!updateTask) {
         return globalerror.handleTodoNotFound(req, res, next);
       } else {
-        res.status(200).json({ message: "Todo updated successfully" });
+        const message = "Todo updated successfully";
+        responceHandler.sendSuccessResponce(res, message, updateTask);
       }
     }
   } catch (err) {
@@ -204,9 +208,12 @@ exports.userTasks = async (req, res, next) => {
         .populate("assigningto")
         .populate("subtasks");
       if (tasks.length === 0) {
-        res.status(500).json({ message: "This user any task not found" });
+        res
+          .status(404)
+          .json({ error: true, message: "This user any task not found" });
       } else {
-        res.json(tasks);
+        //res.json(tasks);
+        responceHandler.sendSuccessResponce(res, message, tasks);
       }
     }
   } catch (err) {
@@ -219,14 +226,9 @@ exports.getCompletedTasks = async (req, res) => {
   try {
     const tasks = await Todo.find({ status: "complete" });
     if (tasks.length === 0) {
-      res.status(404).json({ message: "Completed task not found" });
+      res.status(404).json({error: true, message: "Completed task not found" });
     } else {
-      res.status(200).json({
-        status: "success",
-        data: {
-          tasks,
-        },
-      });
+      responceHandler.sendSuccessResponce(res, message, tasks);
     }
   } catch (err) {
     res.status(400).json({
@@ -242,7 +244,7 @@ exports.addSubTasks = async (req, res, next) => {
     const parentTask = await Todo.findById(id);
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return globalerror.handleInvalidId(req, res, next);
-    } 
+    }
     if (!parentTask) {
       return globalerror.handleTodoNotFound(req, res, next);
     }
@@ -253,10 +255,13 @@ exports.addSubTasks = async (req, res, next) => {
           subtasks: [],
         })
     );
-    const savedSubtasks = await Promise.all(subtasks.map(subtask => subtask.save()));
-    parentTask.subtasks.push(...savedSubtasks.map(subtask => subtask._id));
+    const savedSubtasks = await Promise.all(
+      subtasks.map((subtask) => subtask.save())
+    );
+    parentTask.subtasks.push(...savedSubtasks.map((subtask) => subtask._id));
     await parentTask.save();
-    res.status(200).json(parentTask);
+    const message = "Subtasks added successfully";
+    responceHandler.sendSuccessResponce(res, message, parentTask);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });

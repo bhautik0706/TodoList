@@ -6,6 +6,8 @@ const userValidation = require("../validation/userValidation");
 const validateuser = require("express-validator");
 const { query } = require("express-validator");
 const globalerror = require("./../utlis/errorHandler");
+const responseHandler = require("./../utlis/responseHandler");
+const { message } = require("../validation/userValidation");
 exports.signUp = async (req, res, next) => {
   const { name, email, password } = req.body;
   try {
@@ -16,18 +18,13 @@ exports.signUp = async (req, res, next) => {
       return;
     } else {
       const user = await User.create({ name, email, password });
-      res.status(201).json({
-        status: "success",
-        data: {
-          user,
-        },
-      });
+      const message = "Your account has been sccessfully created";
+      responseHandler.sendCreateResponce(res, message, user);
     }
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 exports.login = (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
@@ -41,24 +38,29 @@ exports.login = (req, res, next) => {
       if (err) {
         return next(err);
       }
-      return res.status(200).json({ message: "Logged in successfully." });
+      const message = "Logged in Successfully";
+      return responseHandler.sendSuccessResponce(res, message, user);
     });
   })(req, res, next);
 };
 
 exports.logOut = (req, res) => {
-  req.logout(function(err) {
-    if (err) { return next(err); }
-    res.status(200).json({ message: "Logged out successfully." });
-  })
- 
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    const message = "You have been successfully logged out";
+    //res.status(200).json({ message: "Logged out successfully." });
+    responseHandler.sendSuccessResponce(res, message);
+  });
 };
 
 exports.isAuthenticated = (req, res, next) => {
-  if(req.isAuthenticated()){
+  if (req.isAuthenticated()) {
     next();
+  } else {
+    //return res.status(401).json({ message: "Please Logged in" });
+    const message = "Please Logged In";
+    responseHandler.sendUnauthorized(res, message);
   }
-  else{
-    return res.status(401).json({ message: "Please Logged in"});
-  }
-}
+};

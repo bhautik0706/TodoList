@@ -5,22 +5,24 @@ const userValidation = require("../validation/userValidation");
 const validateuser = require("express-validator");
 const { query } = require("express-validator");
 const globalerror = require("./../utlis/errorHandler");
+const imageUpload = require("./../utlis/multer");
+const responseHandler = require("./../utlis/responseHandler");
+//const multer = require("multer");
+
 exports.createUser = async (req, res, next) => {
   const { name, email, password } = req.body;
   try {
     //console.log(schema.validate(req.body));
     const user = req.validateData;
     if (await User.findOne({ email: req.body.email })) {
-      res.status(409).json({ message: "This email alredy Exist!" });
+      res
+        .status(409)
+        .json({ error: true, message: "This email alredy Exist!" });
       return;
     } else {
+      const message = "Success! Your Submission has been Saved";
       const user = await User.create({ name, email, password });
-      res.status(201).json({
-        status: "success",
-        data: {
-          user,
-        },
-      });
+      responseHandler.sendCreateResponce(res, message, user);
     }
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -44,7 +46,7 @@ exports.getAll = async (req, res, next) => {
     }
     const userQuery = await User.find(queryObj);
     if (userQuery.length === 1) {
-      res.status(200).json(userQuery);
+      responseHandler.sendSuccessResponce(res, userQuery);
     } else {
       const user = await User.find({
         active: true,
@@ -58,15 +60,11 @@ exports.getAll = async (req, res, next) => {
       if (user.length === 0) {
         return globalerror.handleUserNotFound(req, res, next);
       } else {
-        res.status(200).json({
-          status: "success",
-          result: user.length,
-          data: {
-            user,
-          },
-          totalPages: Math.ceil(count / limit),
-          currentPage: page,
-        });
+        const totalPages = Math.ceil(count / limit);
+        const currentPage = page;
+        const result = user.length;
+        const message = "Success";
+        responseHandler.sendSuccessResponce(res, message, user,totalPages,currentPage,result);
       }
     }
   } catch (error) {
@@ -87,12 +85,8 @@ exports.updateUser = async (req, res, next) => {
       if (!updateUser) {
         return globalerror.handleUserNotFound(req, res, next);
       }
-      res.status(200).json({
-        status: "success",
-        data: {
-          updateUser,
-        },
-      });
+      const message = "Your changes has been Successfully saved";
+      responseHandler.sendSuccessResponce(res, message, updateUser);
     }
   } catch (err) {
     console.log(err);
@@ -112,7 +106,8 @@ exports.deleteUser = async (req, res, next) => {
       }
       /*await User.deleteMany({ _id: user._id });
     res.status(200).json({ message: "User deleted successfully" });*/
-      res.status(200).json({ message: "User deleted successfully" });
+      const message = "User deleted successfully";
+      responseHandler.sendSuccessResponce(res, message, user);
     }
   } catch (err) {
     console.log(err);
