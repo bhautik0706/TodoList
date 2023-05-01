@@ -8,5 +8,5 @@ const upload = require("./../utlis/multer.js");
 
 router.post("/login",globleError.loginUserValidation,login);
 router.get("/logout", logOut);
-router.post("/signUp", upload.single("photo"),globleError.validationError,signUp);
+router.post("/signUp",upload.single("photo"),globleError.validationError,signUp);
 module.exports = router;

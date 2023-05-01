@@ -6,9 +6,6 @@ const photoRouter = require("./routes/photoRoutes");
 const passport = require("passport");
 const session = require("express-session");
 
-
-
-
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
@@ -19,6 +16,7 @@ app.use(
     secret: "mysecretkey",
     resave: false,
     saveUninitialized: false,
+    cookie: { maxAge: 60*60*24*7 },
   })
 );
 app.use(bodyParser.json());

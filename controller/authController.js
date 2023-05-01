@@ -12,30 +12,35 @@ const responseHandler = require("./../utlis/responseHandler");
 const { message } = require("../validation/userValidation");
 exports.signUp = async (req, res, done) => {
   const { name, email, password } = req.body;
+  const url = req.protocol + "://" + req.get("host");
   try {
-    // Hash password before saving to database
     const hashedPassword = await bcrypt.hash(password, 10);
-
-
-    if (!req.file) {
-      return res.status(400).json({ message: "Photo is required" });
+    if (await User.findOne({ email: req.body.email })) {
+      res
+        .status(409)
+        .json({ error: true, message: "This email alredy Exist!" });
+      return;
     }
-
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ error: true, message: "Photo is required" });
+    }
     const { originalname, path, mimetype, size } = req.file;
-    const photo = await Photo.create({
+    const photo = new Photo({
       name: originalname,
       path: path,
       extension: mimetype.split("/")[1],
       size: size,
     });
-
-    const newUser = await User.create({
+    await photo.save();
+    const newUser = new User({
       name,
       email,
       password: hashedPassword,
       photo: photo._id,
     });
-
+    await newUser.save();
     req.logIn(newUser, function (err) {
       const message = "Your account has been successfully created";
       if (err) {

@@ -8,6 +8,7 @@ const globalerror = require("./../utlis/errorHandler");
 const constant = require("./../utlis/constant");
 const responceHandler = require("./../utlis/responseHandler");
 const { message } = require("../validation/todoValidation");
+const { isAuthenticated } = require("./../controller/authController");
 exports.createTodo = async (req, res) => {
   try {
     //const todo =  req.validateData;
@@ -38,7 +39,7 @@ exports.createTodo = async (req, res) => {
     }
     //res.status(201).json(savedTodo);
     const message = "Success! Your todo has been Saved";
-    responceHandler.sendSuccessResponce(res, message, savedTodo);
+    return responceHandler.sendSuccessResponce(res, message, savedTodo);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -226,7 +227,9 @@ exports.getCompletedTasks = async (req, res) => {
   try {
     const tasks = await Todo.find({ status: "complete" });
     if (tasks.length === 0) {
-      res.status(404).json({error: true, message: "Completed task not found" });
+      res
+        .status(404)
+        .json({ error: true, message: "Completed task not found" });
     } else {
       responceHandler.sendSuccessResponce(res, message, tasks);
     }

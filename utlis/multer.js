@@ -14,14 +14,13 @@ const storege = multer.diskStorage({
 
 module.exports = multer({
   storage: storege,
-  
   fileFilter: (req, file, cb) => {
-    const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+    const allowedExtensions = [".jpg", ".jpeg", ".png"];
     const extension = path.extname(file.originalname).toLowerCase();
     if (!allowedExtensions.includes(extension)) {
       const error = {
         error: true,
-        message: 'Only jpg, jpeg, and png files are allowed',
+        message: "Only jpg, jpeg, and png files are allowed",
       };
       return cb(JSON.stringify(error), false);
     }
