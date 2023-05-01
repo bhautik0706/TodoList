@@ -2,6 +2,7 @@ const express = require("express");
 const userRouter = require("./routes/userRoutes");
 const todoRouter = require("./routes/todoRoutes");
 const authRouter = require("./routes/authRoutes");
+const photoRouter = require("./routes/photoRoutes");
 const passport = require("passport");
 const session = require("express-session");
 
@@ -42,9 +43,6 @@ app.use((req, res, next) => {
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/todo", todoRouter);
 app.use("/api/v1/auth", authRouter);
-
-
-
-
+app.use("/api/v1/photo", photoRouter);
 
 module.exports = app;

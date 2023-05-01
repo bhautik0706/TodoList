@@ -1,45 +1,27 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 const constant = require("./../utlis/constant");
+const Photo = require("./../model/photoModel");
 
 const userSchema = mongoose.Schema(
   {
     name: {
       type: String,
-      /*validate: {
-        validator: function (name) {
-          return /^[A-Za-z\s]+$/.test(name);
-        },
-        message: "Please enter only alphabetical letters.",
-      },
-      required: [true, "Please enter your name"],*/
     },
     email: {
       type: String,
-      /*validate: {
-        validator: function (email) {
-          return /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(email);
-        },
-        message: "Please enter valid email address",
-      },
-      required: [true, "Please enter your email"],*/
       unique: true,
       lowercase: true,
     },
+    photo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Photo",
+    },
     password: {
       type: String,
-      /*validate: {
-        validator: function (password) {
-          return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,1024}$/.test(
-            password
-          );
-        },
-        message: "Please enter valid password",
-      },
-      required: [true, "Please enter your password"],*/
       minLength: 8,
     },
-    
+
     active: {
       type: Number,
       enum: [constant.ACTIVE_STATUS.ACTIVE, constant.ACTIVE_STATUS.INACTIVE],

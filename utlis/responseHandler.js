@@ -1,5 +1,5 @@
 exports.sendCreateResponce = (res, message, data) => {
-  res.status(201).json({ error: false, message: "success", data });
+  res.status(201).json({ error: false, message, data });
 };
 
 exports.sendEmptyResponce = (res) => {

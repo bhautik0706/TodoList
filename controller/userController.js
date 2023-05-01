@@ -7,10 +7,13 @@ const { query } = require("express-validator");
 const globalerror = require("./../utlis/errorHandler");
 const imageUpload = require("./../utlis/multer");
 const responseHandler = require("./../utlis/responseHandler");
+const upload = require("./../utlis/multer");
 //const multer = require("multer");
 
 exports.createUser = async (req, res, next) => {
   const { name, email, password } = req.body;
+  const profileimage  = req.file.path;
+  console.log(profileimage);
   try {
     //console.log(schema.validate(req.body));
     const user = req.validateData;
@@ -21,8 +24,9 @@ exports.createUser = async (req, res, next) => {
       return;
     } else {
       const message = "Success! Your Submission has been Saved";
-      const user = await User.create({ name, email, password });
-      responseHandler.sendCreateResponce(res, message, user);
+      const user = new User({ name, email, profileimage, password });
+      const savedUser = await user.save();
+      responseHandler.sendCreateResponce(res, message, savedUser);
     }
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -64,7 +68,14 @@ exports.getAll = async (req, res, next) => {
         const currentPage = page;
         const result = user.length;
         const message = "Success";
-        responseHandler.sendSuccessResponce(res, message, user,totalPages,currentPage,result);
+        responseHandler.sendSuccessResponce(
+          res,
+          message,
+          user,
+          totalPages,
+          currentPage,
+          result
+        );
       }
     }
   } catch (error) {
