@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
 const constant = require("./../utlis/constant");
-const todoSchema = mongoose.Schema(
+const csvSchema = new mongoose.Schema(
   {
+    srno: {
+      type: Number,
+    },
     assigningto: [
       {
         type: mongoose.Schema.ObjectId,
@@ -11,22 +14,13 @@ const todoSchema = mongoose.Schema(
     title: {
       type: String,
     },
-    priority: {
-      type: String,
-      enum: [
-        constant.PRIORITY_TASK.TASK_PRIORITY_HIGH,
-        constant.PRIORITY_TASK.TASK_PRIORITY_MEDIUM,
-        constant.PRIORITY_TASK.TASK_PRIORITY_LOW,
-      ],
-    },
     description: {
       type: String,
       min: 10,
       max: 100,
     },
     duedate: {
-      type: Date,
-      default: Date.now,
+      type: String,
     },
     status: {
       type: String,
@@ -39,9 +33,13 @@ const todoSchema = mongoose.Schema(
     subtasks: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: "Todo",
+        ref: "Csv",
       },
     ],
+    parenttask: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Csv",
+    },
     active: {
       type: Number,
       enum: [constant.ACTIVE_STATUS.ACTIVE, constant.ACTIVE_STATUS.INACTIVE],
@@ -51,13 +49,6 @@ const todoSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
-todoSchema.set("toJSON", {
-  transform: (doc, ret, options) => {
-    ret.id = ret._id;
-    delete ret._id;
-    return ret;
-  },
-});
 
-const Todo = mongoose.model("Todo", todoSchema);
-module.exports = Todo;
+const Csv = mongoose.model("Csv", csvSchema);
+module.exports = Csv;

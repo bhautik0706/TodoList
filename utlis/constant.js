@@ -16,3 +16,8 @@ exports.MIME_TYPES = {
   "image/jpeg": "jpeg",
   "image/png": "png",
 };
+exports.PRIORITY_TASK = {
+  TASK_PRIORITY_HIGH: "high",
+  TASK_PRIORITY_LOW: "low",
+  TASK_PRIORITY_MEDIUM: "medium",
+};

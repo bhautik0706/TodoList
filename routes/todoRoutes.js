@@ -7,7 +7,8 @@ const router = express.Router();
 router
   .route("/")
   .post(
-    globleError.handleTodoValidation,isAuthenticated,
+    globleError.handleTodoValidation,
+    isAuthenticated,
     todoController.createTodo
   )
   .get(isAuthenticated, todoController.getAll);
@@ -27,7 +28,9 @@ router
     isAuthenticated,
     todoController.updatedTodo
   );
-router.route("/:id/subtasks").patch(isAuthenticated,todoController.addSubTasks);
+router
+  .route("/:id/subtasks")
+  .patch(isAuthenticated, todoController.addSubTasks);
 router.route("/user-tasks/:id").get(isAuthenticated, todoController.userTasks);
 
 module.exports = router;

@@ -17,7 +17,7 @@ const schema = Joi.object().keys(
       .messages({
         "string.empty": "Email cannot be empty",
         "string.pattern.base": "Please enter valid email",
-        "any.required": "Email is required"
+        "any.required": "Email is required",
       })
       .required(),
     password: Joi.string()
@@ -27,9 +27,21 @@ const schema = Joi.object().keys(
         "string.empty": "password cannot be empty",
         "string.pattern.base": "Please enter valid password",
         "any.required": "Password is required",
-        "string.min": "Password length must be at least 8 characters long"
+        "string.min": "Password length must be at least 8 characters long",
       })
       .required(),
+    confirmpassword: Joi.string()
+      .min(8)
+      .pattern(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,1024}$/)
+      .equal(Joi.ref("password"))
+      .messages({
+        "string.empty": "confirm password cannot be empty",
+        "string.pattern.base": "Please enter valid confirm password",
+        "any.required": "confirm Password is required",
+        "string.min":
+          "confirm Password length must be at least 8 characters long",
+        "any.only": "Password and confirm password not match",
+      }),
   },
   { abortEarly: false }
 );

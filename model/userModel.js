@@ -21,7 +21,10 @@ const userSchema = mongoose.Schema(
       type: String,
       minLength: 8,
     },
-
+    confirmpassword: {
+      type: String,
+      minLength: 8,
+    },
     active: {
       type: Number,
       enum: [constant.ACTIVE_STATUS.ACTIVE, constant.ACTIVE_STATUS.INACTIVE],

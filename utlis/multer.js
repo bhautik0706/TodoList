@@ -15,7 +15,7 @@ const storege = multer.diskStorage({
 module.exports = multer({
   storage: storege,
   fileFilter: (req, file, cb) => {
-    const allowedExtensions = [".jpg", ".jpeg", ".png"];
+    const allowedExtensions = [".jpg", ".jpeg", ".png", ".csv"];
     const extension = path.extname(file.originalname).toLowerCase();
     if (!allowedExtensions.includes(extension)) {
       const error = {

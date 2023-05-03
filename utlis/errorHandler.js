@@ -101,6 +101,7 @@ const loginUserValidation = (req, res, next) => {
   req.validateData = value;
   next();
 };
+
 module.exports = {
   handleUserNotFound,
   handleInvalidId,
@@ -110,5 +111,5 @@ module.exports = {
   handleTodoUpdateValidation,
   handleUserUpdateValidation,
   loginUserValidation,
-  handlePhotoValidation
+  handlePhotoValidation,
 };

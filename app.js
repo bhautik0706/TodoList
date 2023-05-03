@@ -3,6 +3,7 @@ const userRouter = require("./routes/userRoutes");
 const todoRouter = require("./routes/todoRoutes");
 const authRouter = require("./routes/authRoutes");
 const photoRouter = require("./routes/photoRoutes");
+const csvRouter = require("./routes/csvRoutes");
 const passport = require("passport");
 const session = require("express-session");
 
@@ -16,7 +17,7 @@ app.use(
     secret: "mysecretkey",
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 60*60*24*7 },
+    cookie: { maxAge: 60 * 60 * 24 * 7 },
   })
 );
 app.use(bodyParser.json());
@@ -42,5 +43,5 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/todo", todoRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/photo", photoRouter);
-
+app.use("/api/v1/csv", csvRouter);
 module.exports = app;

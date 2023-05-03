@@ -18,6 +18,10 @@ const schema = Joi.object({
       "string.pattern.base": "Title must not start with a number",
       "any.required": "Title is required",
     }),
+  priority: Joi.string().valid("high", "medium", "low").required().messages({
+    "any.required": "Priority is required",
+    "any.only": "Priority must be high, medium or low",
+  }),
   description: Joi.string().min(10).max(100).required().messages({
     "any.required": "Description is required",
     "string.min": "Description must be at least 10 characters long",

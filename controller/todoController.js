@@ -15,6 +15,7 @@ exports.createTodo = async (req, res) => {
     const newTodo = new Todo({
       assigningto: req.body.assigningto,
       title: req.body.title,
+      priority: req.body.priority,
       description: req.body.description,
       duedate: req.body.duedate,
       status: req.body.status,
